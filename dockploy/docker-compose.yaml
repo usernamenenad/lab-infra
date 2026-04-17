@@ -1,0 +1,25 @@
+services:
+  dockploy:
+    image: docker.io/dokploy/dokploy:latest
+    container_name: dockploy
+    restart: unless-stopped
+
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.dockploy.rule=Host(`deploy.nenad.cloud`)"
+      - "traefik.http.routers.dockploy.entrypoints=websecure"
+      - "traefik.http.routers.dockploy.tls.certresolver=le"
+
+    ports:
+      - "3000:3000"
+
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./dockploy_data:/app/data
+
+    networks:
+      - proxy
+
+networks:
+  proxy:
+    external: true
