@@ -15,6 +15,17 @@ services:
     networks:
       - dokploy_net
 
+  dokploy-redis:
+    image: redis:8.4.2-alpine3.22
+    container_name: dokploy-redis
+    restart: unless-stopped
+
+    volumes:
+      - dokploy_redis:/data
+
+    networks:
+      - dokploy_net
+
   dokploy:
     image: docker.io/dokploy/dokploy:latest
     container_name: dokploy
@@ -22,6 +33,7 @@ services:
 
     depends_on:
       - dokploy-postgres
+      - dokploy-redis
 
     environment:
       - DATABASE_URL=postgres://dokploy:dokploy_password@dokploy-postgres:5432/dokploy
@@ -46,7 +58,8 @@ services:
 volumes:
   dokploy_data:
   dokploy_pg:
-
+  dokploy_redis:
+    driver: local
 
 networks:
   dokploy_net:
